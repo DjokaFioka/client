@@ -1,4 +1,4 @@
-import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
+import { FormGroup, FormControlLabel, Checkbox, Button } from "@mui/material";
 import { useState } from "react";
 
 interface Props {
@@ -7,8 +7,13 @@ interface Props {
     onChange: (items: string[]) => void
 }
 
-export default function CheckboxButtons({items, checked, onChange}: Props) {
+export default function CheckboxButtons({ items, checked, onChange }: Props) {
     const [checkedItems, setCheckedItems] = useState(checked || [])
+    const [expanded, setExpanded] = useState(false);
+
+    const handleToggle = () => {
+        setExpanded(!expanded);
+    };
 
     function handleChecked(value: string) {
         const currentIndex = checkedItems.findIndex(item => item === value);
@@ -21,18 +26,23 @@ export default function CheckboxButtons({items, checked, onChange}: Props) {
         setCheckedItems(newChecked);
         onChange(newChecked);
     }
-    
+
     return (
-        <FormGroup>
-            {items.map(item => (
-                <FormControlLabel 
-                    control={<Checkbox 
-                        checked={checkedItems.indexOf(item) !== -1}
-                        onClick={() => handleChecked(item)}    
-                    />} 
-                    label={item} 
-                    key={item} />
-            ))}
-        </FormGroup>
+        <>
+            <FormGroup>
+                {(expanded ? items : items.slice(0, 3)).map((item) => (
+                    <FormControlLabel
+                        control={<Checkbox
+                            checked={checkedItems.indexOf(item) !== -1}
+                            onClick={() => handleChecked(item)}
+                        />}
+                        label={item}
+                        key={item} />
+                ))}
+            </FormGroup>
+            <Button onClick={handleToggle}>
+                {expanded ? 'Show Less' : 'Show More'}
+            </Button>
+        </>
     )
 }
