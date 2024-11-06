@@ -13,6 +13,8 @@ import { store } from './app/store/configureStore';
 import { Provider } from 'react-redux';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 //const store = configureStore();
 

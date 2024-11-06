@@ -1,17 +1,19 @@
 import { Container, createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import Header from "./Header";
 import { useCallback, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import LoadingComponent from "./LoadingComponent";
 import { useAppDispatch } from "../store/configureStore";
-import { fetchBasketAsync } from "../../features/basket/basketSlice";import { fetchCurrentUser } from "../../features/account/accountSlice";
+import { fetchBasketAsync } from "../../features/basket/basketSlice"; import { fetchCurrentUser } from "../../features/account/accountSlice";
+import HomePage from "../../features/home/HomePage";
 
 function App() {
+  const location = useLocation();
   const dispatch = useAppDispatch();
   //const {setBasket} = useStoreContext();
   const [loading, setLoading] = useState(true);
 
-  const initApp = useCallback(async () =>  {
+  const initApp = useCallback(async () => {
     try {
       await dispatch(fetchCurrentUser());
       await dispatch(fetchBasketAsync());
@@ -26,7 +28,7 @@ function App() {
 
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
-  
+
   const theme = createTheme({
     palette: {
       mode: paletteType,
@@ -35,21 +37,21 @@ function App() {
       }
     }
   })
-  
+
   function handleThemeChange() {
     setDarkMode(!darkMode);
   }
 
-  if (loading)
-    return <LoadingComponent message="Initializing app..." />
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/*This removes default margins and padding in browser */}
-      <Header darkMode={darkMode} handleThemeChange={handleThemeChange}/>
-      <Container>
-        <Outlet />
-      </Container>
+      <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
+      {loading ? <LoadingComponent message="Initializing app..." />
+        : location.pathname === '/' ? <HomePage />
+          : <Container sx={{ mt: 4 }}>
+            <Outlet />
+          </Container>
+      }
     </ThemeProvider>
   )
 }

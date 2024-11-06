@@ -6,12 +6,15 @@ import { store } from "../store/configureStore";
 
 const sleep = () => new Promise(resolve => setTimeout(resolve, 500));
 
-axios.defaults.baseURL = "http://localhost:5078/api/";
+axios.defaults.baseURL = "http://localhost:5078/api/";//import.meta.env.VITE_API_URL;
+const baseURL2 = import.meta.env.VITE_API_URL;
+
 axios.defaults.withCredentials = true; //for cookies
 
 const responseBody = (response: AxiosResponse) => response.data;
 
 axios.interceptors.request.use(config => {
+    console.log('BaseURL = ' + baseURL2);
     const token = store.getState().account.user?.token;
     if (token) 
         config.headers.Authorization = `Bearer ${token}`;
@@ -19,7 +22,8 @@ axios.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(async response => {
-    await sleep();
+    if (import.meta.env.DEV)
+        await sleep();
     const pagination = response.headers['pagination']; //has to be lowercase
     if (pagination) {
         response.data = new PaginatedResponse(response.data, JSON.parse(pagination));
